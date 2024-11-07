@@ -39,6 +39,18 @@ struct FirebaseService {
         }
     }
     
+    func getUsersWith(gender: User.Gender, callback: @escaping ([User])->Void) async {
+        do {
+            let querySnapshot = try await dbCollection.whereField("gender", isEqualTo: gender.rawValue).getDocuments()
+            let users = querySnapshot.documents.compactMap{ queryDocumentSnapshot -> User? in
+                return try? queryDocumentSnapshot.data(as: User.self)
+            }
+            callback(users.sorted{$0.name < $1.name})
+        } catch {
+            print("Error getting documents: \(error)")
+        }
+    }
+    
     func deleteUser(user: User) {
         guard let documentID = user.id else { return }
         dbCollection.document(documentID).delete(){ error in

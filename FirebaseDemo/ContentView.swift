@@ -10,23 +10,36 @@ import SwiftUI
 struct ContentView: View {
     @Environment(UserController.self) private var userController
     var body: some View {
-        List {
-            ForEach(userController.users) { user in
-                HStack {
-                    Text(user.name)
-                        .font(.headline)
-                    Text(user.id ?? "")
-                        .font(.footnote)
-                        .fontWeight(.thin)
-                        .foregroundStyle(.gray)
+        NavigationStack{
+            List {
+                ForEach(userController.users) { user in
+                    HStack {
+                        Text(user.name)
+                            .font(.headline)
+                        Text(user.id ?? "")
+                            .font(.footnote)
+                            .fontWeight(.thin)
+                            .foregroundStyle(.gray)
+                    }
                 }
+                .onDelete { indexSet in
+                    let user = userController.users[indexSet.first!]
+                    userController.delete(user: user)
+                }
+                
             }
-            .onDelete { indexSet in
-                let user = userController.users[indexSet.first!]
-                userController.delete(user: user)
-            }
-            Button("Add User") {
-                userController.add(user: User(name: "William"))
+            .navigationTitle("Olsenbanden")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button("Add User", systemImage: "plus") {
+                        userController.add(user: User(name: "William", gender: User.Gender.male))
+                    }
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Female Users") {
+                        userController.findUsersBy(gender: .female)
+                    }
+                }
             }
         }
     }

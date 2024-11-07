@@ -11,4 +11,9 @@ import FirebaseFirestore
 struct User: Identifiable, Codable {
     @DocumentID var id: String?
     let name: String
+    let gender: Gender
+    
+    enum Gender: String, Codable {
+        case male, female
+    }
 }

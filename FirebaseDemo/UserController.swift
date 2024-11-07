@@ -20,8 +20,12 @@ class UserController {
         }
     }
     
-    func update(user: User){
-        
+    func findUsersBy(gender: User.Gender) {
+        Task {
+            await firebaseService.getUsersWith(gender: gender) { fetchedUsers in
+                self.users = fetchedUsers
+            }
+        }
     }
     func delete(user: User){
         firebaseService.deleteUser(user: user)
